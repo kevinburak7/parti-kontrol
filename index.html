@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Parti Kontrolü" />
+    <meta name="referrer" content="no-referrer" />
+    <!-- KT1: disariya istek yok; yalniz kendi dosyalari -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'"
+    />
+    <title>Parti Kontrolü</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="data:," />
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text: #0f172a;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --primary: #4f46e5;
+        --ok-bg: #ecfdf5;
+        --ok: #047857;
+        --bad-bg: #fef2f2;
+        --bad: #b91c1c;
+        --gray-bg: #f1f5f9;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          16px/1.4 system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      main {
+        max-width: 40rem;
+        margin: 0 auto;
+        padding: 1rem max(1rem, env(safe-area-inset-right)) 6rem
+          max(1rem, env(safe-area-inset-left));
+      }
+      h1 {
+        font-size: 1.375rem;
+        margin: 0.25rem 0 1rem;
+      }
+      h2 {
+        font-size: 1.125rem;
+        margin: 0;
+      }
+      p {
+        margin: 0.5rem 0;
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      .notice {
+        background: var(--ok-bg);
+        color: var(--ok);
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      .error {
+        color: var(--bad);
+        font-size: 0.875rem;
+      }
+      button,
+      .button {
+        font: inherit;
+        min-height: 44px;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        cursor: pointer;
+      }
+      .primary {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+        font-weight: 600;
+      }
+      .danger {
+        color: var(--bad);
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+      }
+      .field {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-weight: 500;
+        font-size: 0.9375rem;
+      }
+      input[type="text"],
+      input[type="date"],
+      textarea {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        min-height: 44px;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        background: #fff;
+        color: var(--text);
+        /* 16 px: iPhone odakta yakinlastirmasin */
+        font: inherit;
+        font-size: 16px;
+      }
+      textarea {
+        resize: vertical;
+      }
+      .checks {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .checks li + li {
+        margin-top: 0.5rem;
+      }
+      .check-link {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+        text-align: left;
+      }
+      .check-link span {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+      .tag {
+        flex-shrink: 0;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 0.375rem;
+        padding: 0.125rem 0.375rem;
+        background: var(--gray-bg);
+        color: var(--muted);
+      }
+      .tag.sent {
+        background: var(--ok-bg);
+        color: var(--ok);
+      }
+      .items {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .item {
+        padding: 0.75rem 0;
+        border-top: 1px solid var(--border);
+      }
+      .item-label {
+        font-weight: 500;
+        overflow-wrap: anywhere;
+      }
+      .item-label small {
+        color: var(--muted);
+      }
+      .statuses {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.25rem;
+        margin: 0.5rem 0;
+        border: 0;
+        padding: 0;
+      }
+      .statuses label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 52px;
+        padding: 0.25rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        line-height: 1.15;
+        text-align: center;
+        color: var(--muted);
+        cursor: pointer;
+      }
+      .statuses input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .statuses label:has(input:focus-visible) {
+        outline: 2px solid var(--primary);
+        outline-offset: 1px;
+      }
+      .statuses label:has(input:checked) {
+        border-color: currentColor;
+        font-weight: 600;
+      }
+      .statuses label.s-OK:has(input:checked) {
+        background: var(--ok-bg);
+        color: var(--ok);
+      }
+      .statuses label.s-NOT_OK:has(input:checked) {
+        background: var(--bad-bg);
+        color: var(--bad);
+      }
+      .statuses label.s-NOT_APPLICABLE:has(input:checked),
+      .statuses label.s-NOT_CHECKED:has(input:checked) {
+        background: var(--gray-bg);
+        color: var(--text);
+      }
+      .mark {
+        font-size: 1.125rem;
+      }
+      .actions {
+        position: sticky;
+        bottom: 0;
+        background: var(--bg);
+        padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
+        border-top: 1px solid var(--border);
+      }
+      .suggestions {
+        list-style: none;
+        margin: 0.25rem 0 0;
+        padding: 0;
+      }
+      .suggestions button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border-radius: 0;
+        border-top-width: 0;
+        overflow-wrap: anywhere;
+        font-weight: 400;
+      }
+      .suggestions li:first-child button {
+        border-top-width: 1px;
+        border-radius: 0.5rem 0.5rem 0 0;
+      }
+      .suggestions li:last-child button {
+        border-radius: 0 0 0.5rem 0.5rem;
+      }
+      .suggestions li:only-child button {
+        border-radius: 0.5rem;
+      }
+      .selected-product {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-top: 0.25rem;
+        padding: 0.25rem 0.25rem 0.25rem 0.75rem;
+        border: 1px solid var(--primary);
+        border-radius: 0.5rem;
+        background: #eef2ff;
+      }
+      .selected-product span {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        font-weight: 400;
+      }
+      .selected-product button {
+        flex-shrink: 0;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+    </style>
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <main id="app">
+      <h1>Parti Kontrolü</h1>
+      <noscript>Bu sayfa için JavaScript açık olmalı.</noscript>
+    </main>
+  </body>
+</html>
